@@ -41,9 +41,8 @@ test = img_files[20000:]
 print("train size", len(train))
 print("test size", len(test))
 
-# Set device
-device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
-# device = "cpu"
+# Set device to cuda if available, mps if available, cpu otherwise
+device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
 print(f"Using device: {device}")
 
 # image normalization
