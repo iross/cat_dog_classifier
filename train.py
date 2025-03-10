@@ -20,10 +20,6 @@ import torch.nn.functional as F
 from PIL import Image
 import matplotlib.pyplot as plt
 
-EPOCHS = 10
-DATA = "./data/"
-TEST = "./data/test/"
-
 # image normalization
 transform = transforms.Compose([
     transforms.Resize((224, 224)),
@@ -97,10 +93,18 @@ class TestCatDogDataset(Dataset):
         fileid = path.split('/')[-1].split('.')[0]
         return (image, fileid)
 
-def main():
-    img_files = os.listdir(f'{DATA}/train/')
+def main(
+    data_dir: Path = typer.Option("./data", "--data-dir", "-d", help="Directory containing the training data"),
+    checkpoint_dir: Path = typer.Option("./checkpoints", "--checkpoint-dir", "-c", help="Directory to save model checkpoints"),
+    epochs: int = typer.Option(10, "--epochs", "-e", help="Number of training epochs"),
+):
+    # Create checkpoint directory if it doesn't exist
+    checkpoint_dir.mkdir(parents=True, exist_ok=True)
+    model_path = checkpoint_dir / "model.pth"
+    
+    img_files = os.listdir(data_dir / "train")
     img_files = list(filter(lambda x: x != 'train', img_files))
-    def train_path(p): return f"{DATA}/train/{p}"
+    def train_path(p): return str(data_dir / "train" / p)
     img_files = list(map(train_path, img_files))
 
     print("total training images", len(img_files))
@@ -140,11 +144,11 @@ def main():
     optimizer = torch.optim.Adam(model.parameters(), lr = 0.001)
 
 
-    if not os.path.exists("model.pth"):
+    if not os.path.exists(model_path):
         # Model Training...
         start = time.time()  # start timer for training loop
 
-        for epoch in range(EPOCHS):
+        for epoch in range(epochs):
 
             epoch_loss = 0
             epoch_accuracy = 0
@@ -195,20 +199,20 @@ def main():
                 print("Epoch: {}, test loss: {:.4f}, test acc: {:.4f}, time: {}\n".format(epoch, test_epoch_loss, test_epoch_accuracy, time.time() - start))
 
         # save model
-        torch.save(model.state_dict(), 'model.pth')
+        torch.save(model.state_dict(), model_path)
         # stop timer and report time spent
         end = time.time()
-        print(f"Model saved. Training completed in {(end-start):.2f} seconds on {device}")
+        print(f"Model saved to {model_path}. Training completed in {(end-start):.2f} seconds on {device}")
     else:
         model = CatAndDogConvNet()
         model.to(device)
-        model.load_state_dict(torch.load("model.pth", weights_only=True))
+        model.load_state_dict(torch.load(model_path, weights_only=True))
         model.eval()
 
     if test:
-        test_files = os.listdir(TEST)
+        test_files = os.listdir(data_dir / "test")
         test_files = list(filter(lambda x: x != 'test', test_files))
-        def test_path(p): return f"{TEST}/{p}"
+        def test_path(p): return str(data_dir / "test" / p)
         test_files = list(map(test_path, test_files))
 
 
@@ -237,4 +241,4 @@ def main():
             plt.show()
 
 if __name__ == "__main__":
-    main()
+    typer.run(main)
