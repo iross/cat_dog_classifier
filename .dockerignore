@@ -1,0 +1,6 @@
+data/
+chtc_pets/
+.venv
+__pycache__
+tmp
+.vscode
