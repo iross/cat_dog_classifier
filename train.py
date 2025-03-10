@@ -2,8 +2,6 @@
 https://www.doczamora.com/cats-vs-dogs-binary-classifier-with-pytorch-cnn
 """
 
-import numpy as np
-import pandas as pd
 import os
 import random
 import time
@@ -11,10 +9,8 @@ import typer
 from pathlib import Path
 
 import torch
-import torchvision
 import torch.nn as nn
-import torchvision.datasets as datasets
-from torchvision import datasets, transforms
+from torchvision import transforms
 from torch.utils.data import Dataset, DataLoader
 import torch.nn.functional as F
 
@@ -211,36 +207,36 @@ def main(
         model.load_state_dict(torch.load(model_path, weights_only=True))
         model.eval()
 
-    if test:
-        test_files = os.listdir(data_dir / "test")
-        test_files = list(filter(lambda x: x != 'test', test_files))
-        def test_path(p): return str(data_dir / "test" / p)
-        test_files = list(map(test_path, test_files))
+    # if test:
+    #     test_files = os.listdir(data_dir / "test")
+    #     test_files = list(filter(lambda x: x != 'test', test_files))
+    #     def test_path(p): return str(data_dir / "test" / p)
+    #     test_files = list(map(test_path, test_files))
 
 
-        test_ds = TestCatDogDataset(test_files, transform)
-        test_dl = DataLoader(test_ds, batch_size=100)
-        len(test_ds), len(test_dl)
+    #     test_ds = TestCatDogDataset(test_files, transform)
+    #     test_dl = DataLoader(test_ds, batch_size=100)
+    #     len(test_ds), len(test_dl)
 
 
-        dog_probs = []
+    #     dog_probs = []
 
-        with torch.no_grad():
-            for X, fileid in test_dl:
-                X= X.to(device)
-                preds = model(X).to(device)
-                preds_list = F.softmax(preds, dim=1)[:, 1].tolist()
-                dog_probs += list(zip(list(fileid), preds_list))
+    #     with torch.no_grad():
+    #         for X, fileid in test_dl:
+    #             X= X.to(device)
+    #             preds = model(X).to(device)
+    #             preds_list = F.softmax(preds, dim=1)[:, 1].tolist()
+    #             dog_probs += list(zip(list(fileid), preds_list))
 
-        # display some images
-        for img, probs in zip(test_files[:10], dog_probs[:10]):
-            pil_im = Image.open(img, 'r')
-            label = "dog" if probs[1] > 0.5 else "cat"
-            title = "prob of dog: " + str(probs[1]) + " Classified as: " + label
-            plt.figure()
-            plt.imshow(pil_im)
-            plt.suptitle(title)
-            plt.show()
+    #     # display some images
+    #     for img, probs in zip(test_files[:10], dog_probs[:10]):
+    #         pil_im = Image.open(img, 'r')
+    #         label = "dog" if probs[1] > 0.5 else "cat"
+    #         title = "prob of dog: " + str(probs[1]) + " Classified as: " + label
+    #         plt.figure()
+    #         plt.imshow(pil_im)
+    #         plt.suptitle(title)
+    #         plt.show()
 
 if __name__ == "__main__":
     typer.run(main)
