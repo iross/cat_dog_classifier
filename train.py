@@ -16,7 +16,6 @@ from torchvision import datasets, transforms
 from torch.utils.data import Dataset, DataLoader
 import torch.nn.functional as F
 
-from sklearn.model_selection import train_test_split
 
 from PIL import Image
 import matplotlib.pyplot as plt
