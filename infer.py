@@ -7,18 +7,9 @@ import typer
 from torchvision import transforms
 from torch.utils.data import Dataset, DataLoader
 import torch.nn.functional as F
-from train import CatAndDogConvNet
+from train import CatAndDogConvNet, transform
 
 from PIL import Image
-
-# image normalization
-transform = transforms.Compose([
-    transforms.Resize((224, 224)),
-    transforms.ToTensor(),
-    transforms.Normalize((0.5,), (0.5,))
-])
-
-
 class TestCatDogDataset(Dataset):
     def __init__(self, image_paths, transform):
         super().__init__()
