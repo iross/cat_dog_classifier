@@ -5,18 +5,16 @@ https://www.doczamora.com/cats-vs-dogs-binary-classifier-with-pytorch-cnn
 import os
 import random
 import time
-import typer
 from pathlib import Path
 
 import torch
 import torch.nn as nn
+import typer
 from torchvision import transforms
 from torch.utils.data import Dataset, DataLoader
 import torch.nn.functional as F
 
-
 from PIL import Image
-import matplotlib.pyplot as plt
 
 # image normalization
 transform = transforms.Compose([
@@ -75,22 +73,6 @@ class CatDogDataset(Dataset):
         label = 0 if 'cat' in path else 1
         return (image, label)
 
-class TestCatDogDataset(Dataset):
-    def __init__(self, image_paths, transform):
-        super().__init__()
-        self.paths = image_paths
-        self.len = len(self.paths)
-        self.transform = transform
-
-    def __len__(self): return self.len
-
-    def __getitem__(self, index): 
-        path = self.paths[index]
-        image = Image.open(path).convert('RGB')
-        image = self.transform(image)
-        fileid = path.split('/')[-1].split('.')[0]
-        return (image, fileid)
-
 def main(
     data_dir: Path = typer.Option("./data", "--data-dir", "-d", help="Directory containing the training data"),
     checkpoint_dir: Path = typer.Option("./checkpoints", "--checkpoint-dir", "-c", help="Directory to save model checkpoints"),
@@ -124,13 +106,10 @@ def main(
     # create train dataset
     train_ds = CatDogDataset(train, transform)
     train_dl = DataLoader(train_ds, batch_size=500)
-    print(len(train_ds), len(train_dl))
 
     # create test dataset
     test_ds = CatDogDataset(test, transform)
     test_dl = DataLoader(test_ds, batch_size=500)
-    print(len(test_ds), len(test_dl))
-
 
     # Create instance of the model and move to device
     model = CatAndDogConvNet().to(device)
@@ -140,7 +119,6 @@ def main(
     start = time.time()
     loss_fn = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr = 0.001)
-
 
     if not os.path.exists(model_path):
         # Model Training...
