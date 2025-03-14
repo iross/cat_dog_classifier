@@ -28,12 +28,12 @@ class CatAndDogConvNet(nn.Module):
     def __init__(self):
         super().__init__()
 
-        # onvolutional layers (3,16,32)
+        # convolutional layers (3,16,32)
         self.conv1 = nn.Conv2d(in_channels = 3, out_channels = 16, kernel_size=(5, 5), stride=2, padding=1)
         self.conv2 = nn.Conv2d(in_channels = 16, out_channels = 32, kernel_size=(5, 5), stride=2, padding=1)
         self.conv3 = nn.Conv2d(in_channels = 32, out_channels = 64, kernel_size=(3, 3), padding=1)
 
-        # conected layers
+        # connected layers
         self.fc1 = nn.Linear(in_features= 64 * 6 * 6, out_features=500)
         self.fc2 = nn.Linear(in_features=500, out_features=50)
         self.fc3 = nn.Linear(in_features=50, out_features=2)
