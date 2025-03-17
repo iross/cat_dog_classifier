@@ -193,7 +193,7 @@ def main(
             if epoch+1 == epochs:
                 sys.exit(0)
             else:
-                sys.exit(85j)
+                sys.exit(85)
 
         # test set accuracy
         with torch.no_grad():
