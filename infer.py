@@ -56,7 +56,6 @@ def main(
             preds_list = F.softmax(preds, dim=1)[:, 1].tolist()
             dog_probs += list(zip(list(fileid), preds_list))
 
-    # write dog_provs as csv
     with open('dog_probs.csv', 'w') as f:
         f.write('fileid,prob\n')
         for fileid, prob in dog_probs:

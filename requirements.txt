@@ -1,4 +1,5 @@
 pandas
+typer
 torch
 matplotlib
 torchvision
